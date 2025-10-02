@@ -1,67 +1,23 @@
-Pentru un cod organizat si usor de citit, am structura codul in fisere cu nume sugestive, 
-grupate dupa functionalitate
--collection.c
--admin.c
--user.c
--movies.c
-
-
-Aceste variabile sunt utilizate pentru a gestiona starea de autentificare:
-
-admin_cookie – păstrează cookie-ul primit la logarea adminului.
-admin_logged – flag care indică dacă adminul este logat.
-user_cookie – cookie-ul unui utilizator obișnuit (dacă se implementează).
-jwt_token – token JWT pentru autentificarea userului.
-
-
-void login_admin(char *host, int port, char *payload)
-
-Trimite o cerere de login către endpoint-ul /api/v1/tema/admin/login.
-Setează admin_cookie dacă autentificarea este reușită.
-Marchează admin_logged = 1.
-void logout_admin(char *host, int port)
-
-Trimite o cerere GET către /api/v1/tema/admin/logout.
-Șterge cookie-ul admin_cookie și resetează admin_logged.
-void add_user(char *host, int port, char* payload)
-
-Adaugă un utilizator nou printr-un POST către /api/v1/tema/admin/users.
-Necesită ca adminul să fie logat.
-void get_users(char *host, int port)
-
-Trimite o cerere GET către /api/v1/tema/admin/users.
-Afișează lista utilizatorilor sub formă de JSON parsată.
-void delete_user(char *host, int port, char *username)
-
-Trimite o cerere DELETE către /api/v1/tema/admin/users/{username}.
-Șterge utilizatorul specificat.
-Curăță variabilele user_cookie și jwt_token (dacă există).
-void response_succ_or_fail(char* response)
-
-Extrage codul HTTP din răspuns și afișează:
-SUCCESS: ... pentru coduri 2xx.
-ERROR: ... pentru orice alt cod.
-char *get_json_body(char *http_response)
-
-Returnează pointerul către corpul JSON al unui răspuns HTTP.
-void parse_and_print_users(const char *json_string)
-
-Primește un string JSON și afișează toți utilizatorii din câmpul users.
-Pentru parsarea și manipularea datelor în format JSON, acest proiect utilizează 
-biblioteca Parson, o bibliotecă C ușoară și eficientă.
-
-
-Pentru parsarea și manipularea datelor în format JSON, acest proiect utilizează biblioteca 
-Parson, o bibliotecă C ușoară și eficientă.
-
-Exemple de utilizare în proiect:
-JSON_Value *root_value = json_parse_string(json_string);
-JSON_Object *root_object = json_value_get_object(root_value);
-
-for (size_t i = 0; i < json_array_get_count(users_array); i++) {
-    JSON_Object *user_obj = json_array_get_object(users_array, i);
-    const char *username = json_object_get_string(user_obj, "username");
-    const char *password = json_object_get_string(user_obj, "password");
-    printf("#%zu: %s:%s\n", i+1, username, password);
-}
-
+Online Movie Library Admin Client (C/C++)
+Project Overview
+This project is a command-line client in C/C++ for managing users in an online movie library via a REST API. The client interacts with a pre-implemented server that exposes HTTP endpoints for creating, deleting, and listing users. The application uses the Parson library for JSON parsing and manipulation.
+Code Organization
+The code is structured into separate files by functionality for readability and maintainability:
+collection.c – handles user collections.
+admin.c – admin login/logout and user management.
+user.c – (optional) regular user operations.
+movies.c – movie-related operations.
+Authentication and State Management
+admin_cookie – stores the cookie received upon admin login.
+admin_logged – flag indicating if the admin is logged in.
+user_cookie – stores regular user session cookie (if implemented).
+jwt_token – JWT token for user authentication.
+Key Functions
+login_admin(host, port, payload) – sends a POST request to /api/v1/tema/admin/login and sets admin_cookie on success.
+logout_admin(host, port) – sends a GET request to /api/v1/tema/admin/logout and clears session variables.
+add_user(host, port, payload) – adds a new user (admin must be logged in).
+get_users(host, port) – fetches and prints all users in JSON format.
+delete_user(host, port, username) – deletes the specified user and clears related session variables.
+response_succ_or_fail(response) – checks HTTP status and prints success or error messages.
+get_json_body(http_response) – extracts the JSON body from an HTTP response.
+parse_and_print_users(json_string) – parses JSON and prints user information.
